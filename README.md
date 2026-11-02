@@ -285,7 +285,7 @@ This project was developed to strengthen practical backend engineering skills, i
 
 This is a demo recording of the API running successfully:
 
-To be published
+https://drive.google.com/file/d/14gnXMmgbd91rPMvb-s0jgAnIQm8nBk2c/view?usp=sharing
 
 ## Author
 
