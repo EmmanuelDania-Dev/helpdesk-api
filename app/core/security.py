@@ -1,6 +1,7 @@
+from datetime import UTC, datetime, timedelta
+
+from jose import JWTError, jwt
 from pwdlib import PasswordHash
-from datetime import datetime, timedelta, timezone
-from jose import jwt, JWTError
 
 from app.core.config import settings
 
@@ -15,7 +16,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict):
     to_encode = data.copy()
 
-    expire = datetime.now(timezone.utc) + timedelta(
+    expire = datetime.now(UTC) + timedelta(
         minutes=settings.access_token_expire_minutes
     )
 

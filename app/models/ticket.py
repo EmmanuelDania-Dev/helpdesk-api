@@ -1,10 +1,14 @@
-
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, ForeignKey, Enum as SqlEnum
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class TicketStatus(PyEnum):

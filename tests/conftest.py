@@ -1,14 +1,13 @@
-import pytest
 
+import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from fastapi.testclient import TestClient
 
-from app.main import app
 from app.db.base import Base
 from app.db.session import get_db
-
+from app.main import app
 
 TEST_DATABASE_URL = "sqlite://"
 
@@ -26,11 +25,30 @@ TestingSessionLocal = sessionmaker(
 
 
 @pytest.fixture
-def client():
+def test_db():
     Base.metadata.create_all(bind=test_engine)
 
+    try:
+        yield
+    finally:
+        Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
+def db_session(test_db):
+    db = TestingSessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture
+def client(test_db):
     def override_get_db():
         db = TestingSessionLocal()
+
         try:
             yield db
         finally:
@@ -38,8 +56,8 @@ def client():
 
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
-        yield test_client
-
-    app.dependency_overrides.clear()
-    Base.metadata.drop_all(bind=test_engine)
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()

@@ -2,7 +2,7 @@
 
 A RESTful HelpDesk API built with **FastAPI, Python, SQLAlchemy, and SQLite**. It allows users to create accounts, authenticate securely, and manage support tickets through a set of protected API endpoints.
 
-The project focuses on backend engineering concepts such as authentication, database relationships, data validation, authorization, pagination, filtering, and automated testing.
+The project focuses on backend engineering concepts such as authentication, database relationships, data validation, authorization, pagination, filtering, automated testing, and continuous integration.
 
 ## Features
 
@@ -16,7 +16,10 @@ The project focuses on backend engineering concepts such as authentication, data
 - **Filtering:** Filter tickets by status (`open`, `in_progress`, or `closed`).
 - **Data Validation:** Validate incoming requests using Pydantic.
 - **Database Migrations:** Manage database schema changes using Alembic.
-- **Automated Testing:** Test API endpoints and application behavior using Pytest.
+- **Automated Testing:** Test application behavior and API endpoints using Pytest.
+- **Test Coverage:** Measure code coverage using pytest-cov.
+- **Code Quality:** Enforce code-quality standards using Ruff.
+- **Continuous Integration:** Automatically run linting and tests through GitHub Actions.
 
 ## Tech Stack
 
@@ -31,12 +34,19 @@ The project focuses on backend engineering concepts such as authentication, data
 | Argon2 / pwdlib | Password hashing |
 | JWT / python-jose | Token-based authentication |
 | Pytest | Automated testing |
+| pytest-cov | Test coverage reporting |
 | HTTPX | API testing client |
+| Ruff | Linting and code quality |
+| GitHub Actions | Continuous integration |
 
 ## Project Structure
 
 ```text
 helpdesk-api/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 │
 ├── app/
 │   ├── api/
@@ -71,14 +81,21 @@ helpdesk-api/
 ├── alembic/
 │
 ├── tests/
+│   ├── unit/
+│   │   ├── test_security.py
+│   │   ├── test_user_service.py
+│   │   ├── test_db_session.py
+│   │   └── test_auth_dependency.py
+│   │
 │   ├── conftest.py
 │   ├── test_main.py
-│   ├── test_users.py
-│   └── test_tickets.py
+│   ├── test_tickets.py
+│   └── test_users.py
 │
 ├── .env.example
 ├── .gitignore
 ├── alembic.ini
+├── pyproject.toml
 ├── requirements.txt
 └── README.md
 ```
@@ -232,25 +249,78 @@ Passwords are hashed before storage and are never returned in API responses.
 
 ## Running Tests
 
-The project includes automated tests written with Pytest and FastAPI TestClient.
+The project includes unit tests and API integration tests written with Pytest.
 
 Run the complete test suite from the project root:
 
 ```bash
-python -m pytest -v
+pytest -v
 ```
 
-The tests cover:
+The test suite covers:
 
 - Root endpoint responses.
 - User registration.
 - Duplicate registration.
 - Successful and unsuccessful login.
+- Password hashing and verification.
+- Authentication dependencies.
+- Database session behavior.
 - Ticket creation and retrieval.
 - Ticket updates and deletion.
 - Authentication requirements.
+- Handling of nonexistent tickets.
 
 Tests use an isolated SQLite database so they do not modify the application's development database.
+
+### Test Coverage
+
+The project uses `pytest-cov` to measure how much of the application code is exercised by the test suite.
+
+Run:
+
+```bash
+pytest --cov=app --cov-report=term-missing --cov-report=html
+```
+
+This generates:
+
+- A terminal coverage report showing covered and uncovered lines.
+- An HTML coverage report in the `htmlcov/` directory.
+
+The current test suite achieves **99% overall code coverage**.
+
+## Code Quality with Ruff
+
+Ruff is used to identify linting issues and maintain consistent code quality.
+
+Run the checks using:
+
+```bash
+ruff check app tests
+```
+
+The command checks the application and test code for linting issues.
+
+## Continuous Integration with GitHub Actions
+
+The project includes a GitHub Actions workflow located at:
+
+```text
+.github/workflows/ci.yml
+```
+
+The workflow automatically runs when code is pushed to the `main` branch or when a pull request targets `main`.
+
+The CI pipeline performs the following steps:
+
+1. Checks out the repository.
+2. Sets up the configured Python environment.
+3. Installs project dependencies.
+4. Runs Ruff to check code quality.
+5. Runs the Pytest suite with coverage reporting.
+
+This helps identify linting issues and test failures automatically before changes are merged.
 
 ## Database Migrations
 
@@ -279,13 +349,25 @@ This project was developed to strengthen practical backend engineering skills, i
 - Managing configuration and environment variables.
 - Handling database migrations.
 - Implementing pagination and filtering.
-- Writing automated API tests.
+- Writing unit and integration tests.
+- Using fixtures and isolated test databases.
+- Measuring test coverage.
+- Applying automated linting and code-quality checks.
+- Setting up continuous integration with GitHub Actions.
 
-## Demo
+## Demo Recordings
 
-This is a demo recording of the API running successfully:
+### API Demonstration
+
+A demonstration of the HelpDesk API running and its main functionality:
 
 https://drive.google.com/file/d/177E89HTxR5yFg8Oeh4MTfdB9xTdDzGpw/view?usp=sharing
+
+### Testing and Code Quality Demonstration
+
+A demonstration of the project's automated tests, coverage, and Ruff checks:
+
+https://drive.google.com/file/d/1k-ce1Q749y3xDVBsVyn2ixX1Ycyq_89e/view?usp=sharing
 
 ## Author
 

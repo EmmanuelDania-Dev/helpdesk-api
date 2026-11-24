@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
+from app.api.routes import tickets, users
+from app.models import Ticket, User  # noqa: F401
+
 from .core.config import settings
-from app.api.routes import users, tickets
-from app.models import User, Ticket
 
 app = FastAPI(
     title=settings.app_name,

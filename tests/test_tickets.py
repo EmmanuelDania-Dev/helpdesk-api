@@ -1,5 +1,5 @@
 def create_user_and_get_token(client):
-    client.post(
+    registration = client.post(
         "/users/register",
         json={
             "name": "Ticket User",
@@ -8,6 +8,8 @@ def create_user_and_get_token(client):
         }
     )
 
+    assert registration.status_code == 201
+
     response = client.post(
         "/users/login",
         json={
@@ -15,6 +17,8 @@ def create_user_and_get_token(client):
             "password": "password123"
         }
     )
+
+    assert response.status_code == 200
 
     token = response.json()["access_token"]
 
@@ -113,3 +117,39 @@ def test_unauthorized_ticket_access(client):
     response = client.get("/tickets/")
 
     assert response.status_code in (401, 403)
+
+def test_get_nonexistent_ticket(client):
+    headers = create_user_and_get_token(client)
+
+    response = client.get(
+        "/tickets/9999",
+        headers=headers
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Ticket not found"
+
+
+def test_update_nonexistent_ticket(client):
+    headers = create_user_and_get_token(client)
+
+    response = client.patch(
+        "/tickets/9999",
+        headers=headers,
+        json={"title": "Updated title"}
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Ticket not found"
+
+
+def test_delete_nonexistent_ticket(client):
+    headers = create_user_and_get_token(client)
+
+    response = client.delete(
+        "/tickets/9999",
+        headers=headers
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Ticket not found"

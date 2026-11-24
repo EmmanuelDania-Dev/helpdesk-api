@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.ticket import TicketStatus
 
+
 class TicketCreate(BaseModel):
     title: str = Field(min_length=1, max_length=100)
     description: str = Field(min_length=1)
